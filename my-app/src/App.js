@@ -3,16 +3,19 @@ import countries from "./countries";
 import './App.css';
 
 export default function App() {
-  const [firstName, setFirstname] = useState(""); // email
-  const [lastName, setlastName] = useState(""); // Password
-  const [country, setCountry] = useState(""); // country
-  const [dataOfBirth, setBirth] = useState(""); // country
-  const [maritalStatus, setMaritalStatus] = useState(""); // country
-  const [holidayAllowance, setHolidayAllowance] = useState(""); // country
-  const [isSpain, setIsSpain] = useState(false); // country
-  const [isGhana, setIsGhana] = useState(false); // country
-  const [isBrazil, setIsBrazil] = useState(false); // country
-  const [acceptedTerms, setAcceptedTerms] = useState(false); // accepted
+  const [firstName, setFirstname] = useState(""); 
+  const [lastName, setlastName] = useState(""); 
+  const [country, setCountry] = useState(""); 
+  const [dataOfBirth, setBirth] = useState(""); 
+  const [maritalStatus, setMaritalStatus] = useState(""); 
+  const [holidayAllowance, setHolidayAllowance] = useState("");
+  const [socialNumber, setSocialNumber] = useState("");
+  const [numberOfChildren, setNumberOfChildren] = useState("");
+  const [workingHours, setWorkingHours] = useState("");
+  const [isSpain, setIsSpain] = useState(false); 
+  const [isGhana, setIsGhana] = useState(false); 
+  const [isBrazil, setIsBrazil] = useState(false); 
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
 
 
@@ -23,6 +26,7 @@ export default function App() {
       Country: ${country}
       Marital Status: ${maritalStatus}
       Holiday Allowance: ${holidayAllowance}
+      Social Number: ${socialNumber}
       Accepted Terms: ${acceptedTerms}
     `);
     
@@ -31,16 +35,27 @@ export default function App() {
 
   const handleIsSpain = (country) => {
     if(country === "Spain") {
-      setIsSpain(true)
+      setIsSpain(true);
+      setIsBrazil(false);
+      setIsGhana(false);
+    } else if(country === "Brazil") {
+      setIsSpain(false);
+      setIsBrazil(true);
+      setIsGhana(false);
+    } else if(country === "Ghana") {
+      setIsSpain(false);
+      setIsBrazil(false);
+      setIsGhana(true);
     } else {
-      setIsSpain(false)
+      setIsSpain(false);
+      setIsBrazil(false);
+      setIsGhana(false);
     }
   }
 
   return (
     <form onSubmit={handleSubmit}>
       <h1>Create Account</h1>
-
       <label>
         Country:
         <select
@@ -88,29 +103,70 @@ export default function App() {
           required />
       </label>
 
-      { isSpain ? <label>
+      { isSpain ? <><label>
         Marital Of Birth:
         <input
-          name=""
+          name="maritalBirth"
           type="text"
           value={maritalStatus}
           onChange={e => setMaritalStatus(e.target.value)}
           required />
-      </label> :
+      </label><label>
+          Social insurance number :
+          <input
+            name="socialInsurance"
+            type="text"
+            value={socialNumber}
+            onChange={e => setSocialNumber(e.target.value)}
+            required />
+        </label></>:
       null
       }
+
+      {isGhana ? <><label>
+        Marital Of Birth:
+        <input
+          name="maritalBirth"
+          type="text"
+          value={maritalStatus}
+          onChange={e => setMaritalStatus(e.target.value)}
+          required />
+      </label><label>
+          Social insurance number :
+          <input
+            name="numberOfChildren"
+            type="number"
+            value={numberOfChildren}
+            onChange={e => setSocialNumber(e.target.value)}
+            required />
+        </label></>:
+      null
+      }
+
+      {isBrazil ? 
+        <label>
+          Working hours
+          <input
+            name="dataOfBirth"
+            type="number"
+            value={dataOfBirth}
+            onChange={e => setBirth(e.target.value)}
+            required />
+        </label> : null
+       }
 
       <label>
         Holiday Allowance:
         <input
           name="holidayAllowance"
           type="number"
+          minLength={30}
           value={holidayAllowance}
           onChange={e => setHolidayAllowance(e.target.value)}
           required />
       </label>
-
-      
+      {isSpain ? <small>Minimum holiday allowance is 30 days</small> : null}
+      {isBrazil ? <small>Maximum holiday allowance is 40 days</small> : null}
 
       <label>
         <input
@@ -125,4 +181,7 @@ export default function App() {
     </form>
   );
 }
+
+
+
 
