@@ -1,47 +1,33 @@
 import React, { useState } from "react";
 import { Form, Field } from "@progress/kendo-react-form";
 import countries from "./countries";
-import Input from "./Components/Input"
-
-
-
-const DropDown = ({ label, value, valid, visited, options,
-  onChange, onBlur, onFocus, validationMessage, }) => {
-  const invalid = !valid && visited;
-  return (
-    <div onBlur={onBlur} onFocus={onFocus}>
-      <label>
-        { label }
-        <select
-          className={invalid ? "invalid" : ""}
-          value={value}
-          onChange={onChange}>
-          <option key=""></option>
-          {options.map(option => (
-            <option key={option}>{option}</option>
-          ))}
-        </select>
-      </label>
-      { invalid && 
-        (<div className="required">{validationMessage}</div>) }
-    </div>
-  )
-}
-
-
-const requiredValidator = (value) => {
-  return value ? "" : "This field is required";
-}
+import Input from "./Components/Input";
+import DropDown from "./Components/DropDown"
 
 export default function App() {
 
   const [isSpain, setIsSpain] = useState(false); 
   const [isGhana, setIsGhana] = useState(false); 
   const [isBrazil, setIsBrazil] = useState(false);
+  const [countryHoliday, setCountryHoliday] = useState("");
+
+  const validationNumber = (value) => {
+    let test = value.toString();
+    if(countryHoliday === "Spain") {
+      return test < 30 ? "In Spain Minimum holiday allowance is 30 days" : "";
+    } else if (countryHoliday === "Brazil") {
+      return test > 40 ? " In Brazil Maximum holiday allowance is 40 days" : "";
+    }
+  }
+
+  const requiredValidator = (value) => {
+    return value ? "" : "This field is required";
+  }
 
   const handleIsSpain = (data) => { 
-    let country = data.target.value;
-    switch(country) {
+    let { value } = data.target;
+    setCountryHoliday(value);
+    switch(value) {
       case "Spain":
         setIsSpain(true);
         setIsBrazil(false);
@@ -66,21 +52,33 @@ export default function App() {
 
   const handleSubmit = (data, event) => {
     console.log(`
-      Country: ${data.country}
+      New employee Information: ${JSON.stringify(data)}
     `);
     
     event.preventDefault();
   }
 
   return (
-    <Form
-      onSubmit={handleSubmit}
-      initialValues={{
-        email: "", password: "", country: "", acceptedTerms: false
-      }}
-      render={(formRenderProps) => (
-        <form onSubmit={formRenderProps.onSubmit}>
-          <h1>Add new employee</h1>
+    <>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+          <Form
+          initialValues={{
+            country: "",
+            firstName: "",
+            lastName: "",
+            dataBirth: "",
+            SocialInsurance: "",
+            MaritalBirthGhana: "",
+            numberChildren: "",
+            workingHours: "",
+            holidayAllowance: ""
+          }}
+            onSubmit={handleSubmit}
+            render={(formRenderProps) => (
+          <form onSubmit={formRenderProps.onSubmit}>
+            <h1>Add new employee</h1>
 
           <Field 
             label="Country:"
@@ -89,10 +87,10 @@ export default function App() {
             options={countries}
             validator={requiredValidator} 
             onChange={handleIsSpain}/>
-
+        
           <Field
             label="First Name:"
-            name="FistName"
+            name="firstName"
             fieldType="text"
             component={Input}
             validator={[requiredValidator]} />
@@ -145,29 +143,23 @@ export default function App() {
             component={Input}
             validator={[requiredValidator]} />)}
 
-            {isBrazil && (<Field
+          <Field
             label="Holiday Allowance"
             name="holidayAllowance"
             fieldType="number"
             component={Input}
-            validator={[requiredValidator]} />)
-            }
-            {isSpain && (<Field
-            label="Holiday Allowance"
-            name="holidayAllowance"
-            fieldType="number"
-            component={Input}
-            validator={[requiredValidator]} />)
-            }
-            
-            {isSpain && (<small>Minimum holiday allowance is 30 days</small>)}
-            {isBrazil && (<small>Maximum holiday allowance is 40 days</small>)}
+            validator={[requiredValidator, validationNumber]}
+             />
           
-          <button disabled={!formRenderProps.allowSubmit}>
+          <button data-testid="submit-new-employee" disabled={!formRenderProps.allowSubmit}>
             Submit
           </button>
         </form>
       )}>
     </Form>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

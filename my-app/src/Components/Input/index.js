@@ -6,11 +6,11 @@
     const invalid = !valid && visited;
     return (
       <div onBlur={onBlur} onFocus={onFocus}>
-        <label>
+        <label className="form-label">
           { label }
           <input
             type={fieldType}
-            className={invalid ? "invalid" : ""}
+            className={invalid ? "invalid" : "" }
             value={value}
             onChange={onChange} />
         </label>
